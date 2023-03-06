@@ -1,7 +1,7 @@
 # Physics Lab
 A Unity project modelling an harmonic oscillator. For use in “Physics Engines” module at ZHAW. This Unity project requires the Unity Editor LTS release [2021.3.17f1](https://unity.com/releases/editor/qa/lts-releases?version=2021.3 "Unity's LTS releases web page").
 
-![Physics Lab scene](physics_lab_scene.png "Physics Lab scene")
+![Physics Lab scene](physicslab/physics_lab_scene.png "Physics Lab scene")
 
 ## How to run 
 1. Download (or clone) this repository.
