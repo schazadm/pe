@@ -10,12 +10,6 @@ public class Cube2Controller : MonoBehaviour
         rb = GetComponent<Rigidbody>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
     private void FixedUpdate()
     {
         currVelocity = rb.velocity;
