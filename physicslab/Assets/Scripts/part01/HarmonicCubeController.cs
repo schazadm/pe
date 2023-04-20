@@ -1,4 +1,3 @@
-﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
@@ -11,7 +10,7 @@ using System.IO;
     Author: kemf
     Version: 1.0
 */
-public class CubeController : MonoBehaviour
+public class HarmonicCubeController : MonoBehaviour
 {
     private Rigidbody rigidBody;
 
