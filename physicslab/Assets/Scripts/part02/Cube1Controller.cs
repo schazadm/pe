@@ -4,11 +4,11 @@ public class Cube1Controller : MonoBehaviour
 {
     private Rigidbody rb;
     // die benötigte Kraft, um den Würfel in 2s auf eine Geschwindigkeit von 2m/s zu bringen
-    private float forceMagnitude = 4f;
-    private int springConstant = 10; // N/m
+    // private float forceMagnitude = 4f;
+    // private int springConstant = 10; // N/m
     private Vector3 currVelocity; // m/s
-    private float currentTimeStep; // s
-    private float targetTime = 2f; // s
+    // private float currentTimeStep; // s
+    // private float targetTime = 2f; // s
 
 
     private float _targetSpeed;
