@@ -11,17 +11,17 @@ public class Cube1Controller : MonoBehaviour
     // private float targetTime = 2f; // s
 
 
-    private float _targetSpeed;
+    public float _targetSpeed;
+    public float _accelerationTime;
     private float _constantForce;
     private float _acceleration;
-    private float _accelerationTime;
     private bool _reachedTargetSpeed;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        _targetSpeed = 2.0f;
-        _accelerationTime = 2f; // 0 < _accelerationTime < 5 seconds
+        // _targetSpeed = 2.0f;
+        // _accelerationTime = 2f;
         _acceleration = _targetSpeed / _accelerationTime;
         _constantForce = rb.mass * _acceleration;
         _reachedTargetSpeed = false;
