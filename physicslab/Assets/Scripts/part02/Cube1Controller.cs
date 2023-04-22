@@ -1,61 +1,80 @@
 using UnityEngine;
+using System.Collections.Generic;
+using System.IO;
 
 public class Cube1Controller : MonoBehaviour
 {
     private Rigidbody rb;
-    // die benötigte Kraft, um den Würfel in 2s auf eine Geschwindigkeit von 2m/s zu bringen
-    // private float forceMagnitude = 4f;
-    // private int springConstant = 10; // N/m
-    private Vector3 currVelocity; // m/s
-    // private float currentTimeStep; // s
-    // private float targetTime = 2f; // s
+    private float currentTimeStep; // s
+    private float currentVelocityX; // m/s
+    private float currentImpulseX; // N*s
+    private float currentForce; // N
+    private float targetVelocity; // m/s
+    private float accelerationTime; // s
+    private float calculatedForce; // N
+    private float calculatedAcceleration; // m/s
+    private bool reachedTargetSpeed;
+    private List<List<float>> timeSeries;
 
-
-    public float _targetSpeed;
-    public float _accelerationTime;
-    private float _constantForce;
-    private float _acceleration;
-    private bool _reachedTargetSpeed;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        // _targetSpeed = 2.0f;
-        // _accelerationTime = 2f;
-        _acceleration = _targetSpeed / _accelerationTime;
-        _constantForce = rb.mass * _acceleration;
-        _reachedTargetSpeed = false;
-
-        // Fügt eine Kraft in X-Richtung auf den Würfel hinzu, um ihn beim Start zu beschleunigen
-        // rb.AddForce(transform.right * forceMagnitude, ForceMode.Impulse);
+        timeSeries = new List<List<float>>();
+        targetVelocity = 2f;
+        accelerationTime = 2f;
+        calculatedAcceleration = targetVelocity / accelerationTime;
+        calculatedForce = rb.mass * calculatedAcceleration;
+        reachedTargetSpeed = false;
     }
 
-    // private void FixedUpdate()
-    // {
-    //     currVelocity = rb.velocity;
-    //     currentTimeStep += Time.deltaTime;
-    // }
     void FixedUpdate()
     {
-        currVelocity = rb.velocity;
+        currentTimeStep += Time.deltaTime;
+        currentVelocityX = rb.velocity.x;
+        currentImpulseX = rb.mass * currentVelocityX;
+        currentForce = (rb.velocity.x / currentTimeStep) * rb.mass;
 
-        if (rb.velocity.x < _targetSpeed && !_reachedTargetSpeed)
+        timeSeries.Add(new List<float>() {
+            currentTimeStep,
+            rb.position.x,
+            rb.velocity.x,
+            currentImpulseX,
+            currentForce,
+        });
+
+        if (rb.velocity.x < targetVelocity && !reachedTargetSpeed)
         {
-            rb.AddForce(_constantForce, 0, 0);
+            rb.AddForce(calculatedForce, 0, 0);
             return;
         }
-        _reachedTargetSpeed = true;
+        reachedTargetSpeed = true;
     }
 
     private void OnCollisionEnter(Collision other)
     {
-        Debug.Log(gameObject.name + " collided with " + other.gameObject.name);
-        if (other.gameObject.CompareTag("Stick")) stick(other);
+        if (other.gameObject.CompareTag("Cube"))
+        {
+            gameObject.AddComponent<FixedJoint>();
+            gameObject.GetComponent<FixedJoint>().connectedBody = other.rigidbody;
+        }
     }
 
-    private void stick(Collision other)
+    void OnApplicationQuit()
     {
-        gameObject.AddComponent<FixedJoint>();
-        gameObject.GetComponent<FixedJoint>().connectedBody = other.rigidbody;
+        WriteTimeSeriesToCSV();
+    }
+
+    void WriteTimeSeriesToCSV()
+    {
+        using (var streamWriter = new StreamWriter("time_series_cube_1.csv"))
+        {
+            streamWriter.WriteLine("t,x(t),v(t),p(t),F(t)");
+            foreach (List<float> timeStep in timeSeries)
+            {
+                streamWriter.WriteLine(string.Join(",", timeStep));
+                streamWriter.Flush();
+            }
+        }
     }
 }
