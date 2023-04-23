@@ -35,7 +35,7 @@ public class StatsLoggerController : MonoBehaviour
 
     void OnApplicationQuit()
     {
-        // WriteTimeSeriesToCSV();
+        WriteTimeSeriesToCSV();
     }
 
     void WriteTimeSeriesToCSV()
