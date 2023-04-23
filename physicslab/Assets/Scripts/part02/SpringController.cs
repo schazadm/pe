@@ -3,13 +3,14 @@ using UnityEngine;
 public class SpringController : MonoBehaviour
 {
     public float springConstant;
-    public float initialLength;
+    public float springRestingLength;
     public float compressionSpeed;
-    private Rigidbody collidingRigidbody;
-    private Rigidbody springRigidbody;
+    private float springForce;
+    private Rigidbody rb;
+    private Rigidbody collidingCubRb;
     private bool isCompressed;
-    private bool isCompressing;
 
+    // animation
     public GameObject springAnimatedGO;
     private float timer = 0;
     private float animationSpeed = .09f;
@@ -20,13 +21,13 @@ public class SpringController : MonoBehaviour
         // initialLength = 5f;
         // springConstant = 1000f;
         // compressionSpeed = .1f;
-        springRigidbody = GetComponent<Rigidbody>();
+        rb = GetComponent<Rigidbody>();
     }
 
     private void OnTriggerEnter(Collider collider)
     {
         if (!collider.attachedRigidbody) return;
-        collidingRigidbody = collider.attachedRigidbody;
+        collidingCubRb = collider.attachedRigidbody;
         isCompressed = true;
     }
 
@@ -41,7 +42,12 @@ public class SpringController : MonoBehaviour
     private void FixedUpdate()
     {
         if (!isCompressed) return;
-        Vector3 velocity = collidingRigidbody.velocity;
+        Vector3 velocity = collidingCubRb.velocity;
+        float posXDelta = Mathf.Abs(transform.position.x - collidingCubRb.position.x);
+        float compressionLength = springRestingLength - posXDelta;
+        springForce = -springConstant * compressionLength;
+        collidingCubRb.AddForce(springForce, 0, 0);
+
         if (velocity.x > 0)
         {
             animateSpring(-compressionSpeed, 3 * compressionSpeed);
@@ -50,13 +56,6 @@ public class SpringController : MonoBehaviour
         {
             animateSpring(compressionSpeed, -3 * compressionSpeed);
         }
-        collidingRigidbody.velocity = new Vector3(velocity.x - compressionSpeed, velocity.y, velocity.z);
-        float compressionLength = initialLength - Mathf.Abs(transform.position.x - collidingRigidbody.position.x);
-        if (compressionLength < 0) return;
-        isCompressing = compressionLength > 0.01f;
-        if (!isCompressing) return;
-        float force = -springConstant * compressionLength;
-        springRigidbody.AddForce(force, 0, 0);
     }
 
     private void animateSpring(float scale, float pos)

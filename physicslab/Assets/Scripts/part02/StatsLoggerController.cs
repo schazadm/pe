@@ -2,56 +2,54 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.IO;
 
-public class Cube2Controller : MonoBehaviour
+public class StatsLoggerController : MonoBehaviour
 {
-    private Rigidbody rb;
+    public Rigidbody cubeOne;
+    public Rigidbody cubeTwo;
     private float currentTimeStep; // s
     private float currentVelocityX; // m/s
     private float currentImpulseX; // N*s
     private float currentForce; // N
     private List<List<float>> timeSeries;
-    private bool isFixed;
 
     void Start()
     {
-        rb = GetComponent<Rigidbody>();
         timeSeries = new List<List<float>>();
-        isFixed = false;
     }
 
-    private void FixedUpdate()
+    void FixedUpdate()
     {
         currentTimeStep += Time.deltaTime;
-        if (!isFixed) return;
-        currentVelocityX = rb.velocity.x;
-        currentImpulseX = rb.mass * currentVelocityX;
-        currentForce = (rb.velocity.x / currentTimeStep) * rb.mass;
+        // currentVelocityX = rb.velocity.x;
+        // currentImpulseX = rb.mass * currentVelocityX;
+        // currentForce = (rb.velocity.x / currentTimeStep) * rb.mass;
+
+        // timeSeries.Add(new List<float>() {
+        //     currentTimeStep,
+        //     rb.position.x,
+        //     rb.velocity.x,
+        //     currentImpulseX,
+        //     currentForce,
+        // });
 
         timeSeries.Add(new List<float>() {
             currentTimeStep,
-            rb.position.x,
-            rb.velocity.x,
-            currentImpulseX,
-            currentForce,
+            cubeOne.position.x ,
+            cubeTwo.position.x,
+            cubeOne.velocity.x, cubeTwo.velocity.x,
+            cubeOne.velocity.x * cubeOne.mass,
+            cubeTwo.velocity.x * cubeTwo.mass
         });
-    }
-
-    private void OnCollisionEnter(Collision other)
-    {
-        if (other.gameObject.CompareTag("Cube"))
-        {
-            isFixed = true;
-        }
     }
 
     void OnApplicationQuit()
     {
-        WriteTimeSeriesToCSV();
+        // WriteTimeSeriesToCSV();
     }
 
     void WriteTimeSeriesToCSV()
     {
-        using (var streamWriter = new StreamWriter("time_series_cube_2.csv"))
+        using (var streamWriter = new StreamWriter("time_series_cube_1.csv"))
         {
             streamWriter.WriteLine("t,x(t),v(t),p(t),F(t)");
             foreach (List<float> timeStep in timeSeries)
