@@ -28,6 +28,7 @@ public class StatsLoggerController : MonoBehaviour
             c_2.velocity.x,
             c_1.velocity.x * c_1.mass,
             c_2.velocity.x * c_2.mass,
+            (c_1.velocity.x * c_1.mass)+(c_2.velocity.x * c_2.mass),
             (c_1.velocity.x / currentTimeStep) * c_1.mass, // F=a*m=(v/deltaT)*m
             (c_2.velocity.x / currentTimeStep) * c_2.mass,
         });
@@ -42,7 +43,7 @@ public class StatsLoggerController : MonoBehaviour
     {
         using (var streamWriter = new StreamWriter("time_series.csv"))
         {
-            streamWriter.WriteLine("t,x1(t),x2(t),v1(t),v2(t),p1(t),p2(t),F1(t),F2(t)");
+            streamWriter.WriteLine("t,x1(t),x2(t),v1(t),v2(t),p1(t),p2(t),pg(t),F1(t),F2(t)");
             foreach (List<float> timeStep in timeSeries)
             {
                 streamWriter.WriteLine(string.Join(",", timeStep));
